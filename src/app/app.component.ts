@@ -109,8 +109,10 @@ export class AppComponent {
       // Generate the PDF
       const pdfDoc = pdfMake.createPdf(pdfDefinition);
 
-      // Open the PDF in the same tab
-      pdfDoc.open();
+     //open in new tab
+    pdfDoc.getDataUrl((dataUrl) => {
+      window.open(dataUrl, '_blank');
+    });
     }
   }
 
@@ -151,7 +153,16 @@ export class AppComponent {
       // Generate the PDF
       const pdfDoc = pdfMake.createPdf(pdfDefinition);
       // Download the PDF as a file
-      pdfDoc.download('invoice.pdf');
+         // Download the PDF as a file
+    pdfDoc.getBlob((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'invoice.pdf';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
     }
   }
 
