@@ -1,3 +1,132 @@
-<h1 class="text-3xl font-bold underline">
-  Hello world!
-</h1>
+<!-- invoice-form.component.html -->
+
+<div class="flex flex-col items-center justify-center min-h-screen">
+  <form
+    class="bg-white shadow-md rounded-lg border border-gray-300 p-6 w-full md:w-96 min-w-[1000px] grid grid-cols-2 gap-4"
+    [formGroup]="invoiceForm">
+    <h2 class="text-xl font-semibold col-span-2 mb-4">Invoice</h2>
+    <div class="col-span-2">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="customerName">Customer Name</label>
+      <input formControlName="customerName" type="text" id="customerName" name="customerName"
+        class="form-input w-full rounded-md border-gray-300" />
+      <div
+        *ngIf="invoiceForm.get('customerName')?.invalid && (invoiceForm.get('customerName')?.dirty || invoiceForm.get('customerName')?.touched)"
+        class="text-red-500 mt-1">
+        <span *ngIf="invoiceForm.get('customerName')?.hasError('required')">Customer Name is required.</span>
+      </div>
+    </div>
+    <div class="col-span-2">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="customerEmail">Customer Email</label>
+      <input formControlName="customerEmail" type="email" id="customerEmail" name="customerEmail"
+        class="form-input w-full rounded-md border-gray-300" />
+      <div
+        *ngIf="invoiceForm.get('customerEmail')?.invalid && (invoiceForm.get('customerEmail')?.dirty || invoiceForm.get('customerEmail')?.touched)"
+        class="text-red-500 mt-1">
+        <span *ngIf="invoiceForm.get('customerEmail')?.hasError('required')">Email is required.</span>
+        <span *ngIf="invoiceForm.get('customerEmail')?.hasError('email')">Invalid email address format.</span>
+      </div>
+    </div>
+    <div class="col-span-2">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="customerTel">Customer Phone Number</label>
+      <input formControlName="customerTel" type="number" id="customerTel" name="customerTel"
+        class="form-input w-full rounded-md border-gray-300" />
+      <div
+        *ngIf="invoiceForm.get('customerTel')?.invalid && (invoiceForm.get('customerTel')?.dirty || invoiceForm.get('customerTel')?.touched)"
+        class="text-red-500 mt-1">
+        <span *ngIf="invoiceForm.get('customerTel')?.hasError('required')">Phone Number is required.</span>
+        <span *ngIf="invoiceForm.get('customerTel')?.hasError('pattern')">Invalid phone number format.</span>
+      </div>
+    </div>
+    <div class="col-span-2">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="customerName">Customer Address</label>
+      <input formControlName="customerAddress" type="text" id="customerAddress" name="customerAddress"
+        class="form-input w-full rounded-md border-gray-300" />
+      <div
+        *ngIf="invoiceForm.get('customerAddress')?.invalid && (invoiceForm.get('customerAddress')?.dirty || invoiceForm.get('customerAddress')?.touched)"
+        class="text-red-500 mt-1">
+        <span *ngIf="invoiceForm.get('customerAddress')?.hasError('required')">Customer <Address></Address> is
+          required.</span>
+      </div>
+    </div>
+    <div>
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="invoiceNumber">Invoice Number</label>
+      <input value="" oninput="this.value = !!this.value && Math.abs(this.value) >= 0 ? Math.abs(this.value):null"
+        formControlName="invoiceNumber" type="number" id="invoiceNumber" name="invoiceNumber"
+        class="form-input w-full rounded-md border-gray-300" />
+        <div
+        *ngIf="invoiceForm.get('invoiceNumber')?.invalid && (invoiceForm.get('invoiceNumber')?.dirty || invoiceForm.get('invoiceNumber')?.touched)"
+        class="text-red-500 mt-1">
+        <span *ngIf="invoiceForm.get('invoiceNumber')?.hasError('required')">Invoice Number is required.</span>
+      </div>
+    </div>
+    <div>
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="itemName">Item Name</label>
+      <input formControlName="itemName" type="text" id="itemName" name="itemName"
+        class="form-input w-full rounded-md border-gray-300" />
+      <div
+        *ngIf="invoiceForm.get('itemName')?.invalid && (invoiceForm.get('itemName')?.dirty || invoiceForm.get('itemName')?.touched)"
+        class="text-red-500 mt-1">
+        <span *ngIf="invoiceForm.get('itemName')?.hasError('required')">Item Name is required.</span>
+      </div>
+    </div>
+    <div>
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="quantity">Quantity</label>
+      <input value=0 oninput="this.value = !!this.value && Math.abs(this.value) >= 0 ? Math.abs(this.value):null"
+        formControlName="quantity" type="number" id="quantity" name="quantity"
+        class="form-input w-full rounded-md border-gray-300" />
+      <div
+        *ngIf="invoiceForm.get('quantity')?.invalid && (invoiceForm.get('quantity')?.dirty ||
+        invoiceForm.get('quantity')?.touched)"  class="text-red-500 mt-1">
+        <span *ngIf="invoiceForm.get('quantity')?.hasError('required')">Quantity is required.</span>
+      </div>
+    </div>
+    <div>
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="pricePerItem">Price Per Item</label>
+      <input value=0 oninput="this.value = !!this.value && Math.abs(this.value) >= 0 ? Math.abs(this.value):null"
+        formControlName="pricePerItem" type="number" id="pricePerItem" name="pricePerItem"
+        class="form-input w-full rounded-md border-gray-300" />
+      <div
+        *ngIf="invoiceForm.get('pricePerItem')?.invalid && (invoiceForm.get('pricePerItem')?.dirty ||
+        invoiceForm.get('pricePerItem')?.touched)"class="text-red-500 mt-1">
+        <span *ngIf="invoiceForm.get('pricePerItem')?.hasError('required')">Price is required.</span>
+      </div>
+    </div>
+    <button [disabled]="!invoiceForm.valid" type="button"
+      class="bg-blue-500 hover:bg-white hover:text-blue-500 text-white font-bold py-2 px-4 rounded" (click)="addItem()">
+      Add Item
+    </button>
+    <div class="col-span-2">
+      <table class="mt-6 w-full">
+        <thead>
+          <tr>
+            <th class="px-4 py-2">Item Name</th>
+            <th class="px-4 py-2">Quantity</th>
+            <th class="px-4 py-2">Price Per Item</th>
+            <th class="px-4 py-2">Total Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of submittedItems">
+            <td class="px-4 py-2">{{ item.itemName }}</td>
+            <td class="px-4 py-2">{{ item.quantity }}</td>
+            <td class="px-4 py-2">{{ item.pricePerItem }}</td>
+            <td class="px-4 py-2">{{ item.totalPrice }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-span-2 flex justify-center space-x-4 mt-4">
+
+      <button type="button" 
+        class="bg-blue-500 hover:bg-white hover:text-blue-500 text-white font-bold py-2 px-4 rounded"
+        (click)="viewPDF()">
+        View PDF
+      </button>
+      <button type="button"
+        class="bg-blue-500 hover:bg-white hover:text-blue-500 text-white font-bold py-2 px-4 rounded"
+        (click)="downloadPDF()">
+        Download PDF
+      </button>
+    </div>
+  </form>
+</div>
