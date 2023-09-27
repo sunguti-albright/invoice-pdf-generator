@@ -6,6 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 
+import { HttpClient } from '@angular/common/http';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 
 @Component({
@@ -18,11 +19,17 @@ export class AppComponent {
   invoiceForm: FormGroup;
   submittedItems: any[] = []; // Array to store submitted items
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private http: HttpClient) {
     this.invoiceForm = this.fb.group({
       customerName: new FormControl('', [Validators.required]),
-      customerEmail: new FormControl('', [Validators.required, Validators.email]),
-      customerTel: new FormControl('', [Validators.required, Validators.pattern(/^\d{10}$/)]),
+      customerEmail: new FormControl('', [
+        Validators.required,
+        Validators.email,
+      ]),
+      customerTel: new FormControl('', [
+        Validators.required,
+        Validators.pattern(/^\d{10}$/),
+      ]),
       customerAddress: new FormControl('', [Validators.required]),
       invoiceNumber: new FormControl('', [Validators.required]),
       itemName: new FormControl('', [Validators.required]),
@@ -54,116 +61,39 @@ export class AppComponent {
     this.invoiceForm.reset();
   }
 
-
   viewPDF() {
     if (this.submittedItems.length > 0) {
-      const pdfDefinition: any = {
-        content: [
-          // using a { text: '...' } object lets you set styling properties
-          { text: 'INVOICE', fontSize: 24 },
-          'Albright Sunguti',
-          'sungutialbright@gmail.com ',
-          { text: 'Tel : 0799735661', fontSize: 15 },
-        
-            {
-              columns: [
-                'Bill to :',
-                {
-                  width: '60%',
-                  text : this.invoiceForm.value.customerName
-                  
-                },
-                {
-                  width: '40*',
-                  text: 'Second column'
-                },
-              ],
-              // optional space between columns
-              columnGap: 20
-            },
-            {
-              table: {
-                headerRows: 1,
-                widths: ['*', '*', '*', '*'],
-                body: [
-                  ['Item Name', 'Quantity', 'Price Per Item', 'Total Price'],
-                  ...this.submittedItems.map((item) => [
-                    item.itemName,
-                    item.quantity,
-                    item.pricePerItem,
-                    item.totalPrice,
-                  ]),
-                ],
-              },
-            },
-        ],
-        styles: {
-          header: {
-            fontSize: 18,
-            bold: true,
-            margin: [0, 0, 0, 10],
+      this.http
+        .get('/api/generate-pdf/view-pdf', { responseType: 'arraybuffer' })
+        .subscribe(
+          (data) => {
+            const blob = new Blob([data], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+            window.open(url, '_blank');
           },
-        },
-      };
-
-      // Generate the PDF
-      const pdfDoc = pdfMake.createPdf(pdfDefinition);
-
-     //open in new tab
-    pdfDoc.getDataUrl((dataUrl) => {
-      window.open(dataUrl, '_blank');
-    });
+          (error) => {
+            console.error(error);
+          }
+        );
     }
   }
 
   downloadPDF() {
     if (this.submittedItems.length > 0) {
-      const pdfDefinition: any = {
-        content: [
-          {
-            text: 'Albright Invoice',
-            style: 'header',
-            alignment: 'center',
-          },
-          {
-            table: {
-              headerRows: 1,
-              widths: ['*', '*', '*', '*'],
-              body: [
-                ['Item Name', 'Quantity', 'Price Per Item', 'Total Price'],
-                ...this.submittedItems.map((item) => [
-                  item.itemName,
-                  item.quantity,
-                  item.pricePerItem,
-                  item.totalPrice,
-                ]),
-              ],
-            },
-          },
-        ],
-        styles: {
-          header: {
-            fontSize: 18,
-            bold: true,
-            margin: [0, 0, 0, 10],
-          },
-        },
-      };
-
-      // Generate the PDF
-      const pdfDoc = pdfMake.createPdf(pdfDefinition);
-      // Download the PDF as a file
-         // Download the PDF as a file
-    pdfDoc.getBlob((blob) => {
+  // Make a GET request to the /download-pdf endpoint
+  this.http.get('/api/generate-pdf/download-pdf', { responseType: 'arraybuffer' }).subscribe(
+    (data) => {
+      const blob = new Blob([data], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = 'invoice.pdf';
-      document.body.appendChild(a);
       a.click();
-      window.URL.revokeObjectURL(url);
-    });
+    },
+    (error) => {
+      console.error(error);
+    }
+  );
     }
   }
-
 }
