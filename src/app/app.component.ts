@@ -7,10 +7,6 @@ import {
 } from '@angular/forms';
 
 import * as pdfMake from 'pdfmake/build/pdfmake';
-import * as pdfFonts from 'pdfmake/build/vfs_fonts';
-
-// Register fonts - Replace with the actual font files
-(pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
   selector: 'app-root',
@@ -57,7 +53,6 @@ export class AppComponent {
 
     this.invoiceForm.reset();
   }
-
 
 
   viewPDF() {
